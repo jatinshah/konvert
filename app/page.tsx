@@ -24,9 +24,11 @@ const CurrencyConverterApp = () => {
   };
   const [convertedAmount, setConvertedAmount] = useState('');
   const [exchangeRate, setExchangeRate] = useState(null);
+  const [lastFetchTime, setLastFetchTime] = useState(0);
 
-  // Simulated exchange rate fetch (replace with actual API call)
   useEffect(() => {
+    const CACHE_DURATION = 60 * 60 * 1000; // 10 minutes in milliseconds
+
     const fetchExchangeRate = async () => {
       try {
         const response = await fetch(
@@ -34,13 +36,17 @@ const CurrencyConverterApp = () => {
         );
         const data = await response.json();
         setExchangeRate(data.data[toCurrency]);
+        setLastFetchTime(Date.now());
       } catch (error) {
         console.error('Failed to fetch exchange rate', error);
       }
     };
 
-    fetchExchangeRate();
-  }, [fromCurrency, toCurrency]);
+    const currentTime = Date.now();
+    if (currentTime - lastFetchTime >= CACHE_DURATION) {
+      fetchExchangeRate();
+    }
+  }, [fromCurrency, toCurrency, lastFetchTime]);
 
   const convertCurrency = () => {
     if (amount && exchangeRate) {
