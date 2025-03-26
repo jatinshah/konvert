@@ -2,6 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { SG, ID } from 'country-flag-icons/react/3x2'
 
+const flags = {
+  'IDR': <ID title="Indonesia" className="w-10 h-10" />,
+  'SGD': <SG title="Singapore" className="w-10 h-10" />,
+}
+
 const CurrencyConverterApp = () => {
   const [fromCurrency, setFromCurrency] = useState('IDR');
   const [toCurrency, setToCurrency] = useState('SGD');
@@ -85,7 +90,7 @@ const CurrencyConverterApp = () => {
           {/* From Currency */}
           <div className="mb-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-center">
             <div className="mr-4">
-              <ID title="Indonesia" className="w-10 h-10" />
+              {flags[fromCurrency as keyof typeof flags]}
             </div>
             <div className="flex-grow">
               <span className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100">{fromCurrency}</span>
@@ -122,7 +127,7 @@ const CurrencyConverterApp = () => {
           {/* To Currency */}
           <div className="mb-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-center">
             <div className="mr-4">
-              <SG title="Indonesia" className="w-10 h-10" />
+              {flags[toCurrency as keyof typeof flags]}
             </div>
             <div className="flex-grow">
               <span className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100">{toCurrency}</span>
