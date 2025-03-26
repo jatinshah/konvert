@@ -74,27 +74,29 @@ const CurrencyConverterApp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-blue-600 p-4 text-center">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-blue-600 dark:bg-blue-800 p-4 text-center">
           <h1 className="text-2xl font-bold text-white">Currency Converter</h1>
-          <p className="text-blue-100">{fromCurrency} to {toCurrency}</p>
+          <p className="text-blue-100 dark:text-blue-200">{fromCurrency} to {toCurrency}</p>
         </div>
 
         <div className="p-6">
           {/* From Currency */}
-          <div className="mb-4 bg-gray-50 rounded-lg p-4 flex items-center">
+          <div className="mb-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-center">
             <div className="mr-4">
               <ID title="Indonesia" className="w-10 h-10" />
             </div>
             <div className="flex-grow">
-              <span className="font-bold text-lg mr-2">{fromCurrency}</span>
+              <span className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100">{fromCurrency}</span>
             </div>
             <input
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              className="w-full text-right text-xl font-semibold bg-transparent outline-none"
+              className="w-full text-right text-xl font-semibold bg-transparent outline-none
+              text-gray-800 dark:text-gray-100 
+              placeholder-gray-500 dark:placeholder-gray-400"
               placeholder="Enter amount"
               value={displayAmount}
               onChange={handleAmountChange}
@@ -111,21 +113,21 @@ const CurrencyConverterApp = () => {
           <div className="flex justify-center my-2">
             <button
               onClick={swapCurrencies}
-              className="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center text-2xl"
+              className="bg-gray-200 dark:bg-gray-600 rounded-full w-12 h-12 flex items-center justify-center text-2xl text-gray-800 dark:text-gray-100"
             >
               ⇅
             </button>
           </div>
 
           {/* To Currency */}
-          <div className="mb-4 bg-gray-50 rounded-lg p-4 flex items-center">
+          <div className="mb-4 bg-gray-50 dark:bg-gray-700 rounded-lg p-4 flex items-center">
             <div className="mr-4">
               <SG title="Indonesia" className="w-10 h-10" />
             </div>
             <div className="flex-grow">
-              <span className="font-bold text-lg mr-2">{toCurrency}</span>
+              <span className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100">{toCurrency}</span>
             </div>
-            <div className="w-full text-right text-xl font-semibold text-blue-600">
+            <div className="w-full text-right text-xl font-semibold text-blue-600 dark:text-blue-400">
               {convertedAmount || '0.00'}
             </div>
           </div>
@@ -133,14 +135,14 @@ const CurrencyConverterApp = () => {
           {/* Convert Button */}
           <button
             onClick={convertCurrency}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-bold hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 dark:bg-blue-700 text-white py-3 rounded-lg text-lg font-bold hover:bg-blue-700 transition"
           >
             Convert
           </button>
 
           {/* Exchange Rate Info */}
           {exchangeRate && (
-            <div className="text-center mt-4 text-gray-600">
+            <div className="text-center mt-4 text-gray-600 dark:text-gray-30">
               <p>1 {fromCurrency} = {parseFloat(Number(exchangeRate).toPrecision(4))} {toCurrency}</p>
             </div>
           )}
