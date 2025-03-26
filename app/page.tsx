@@ -26,25 +26,26 @@ const CurrencyConverterApp = () => {
   const [exchangeRate, setExchangeRate] = useState(null);
   const [lastFetchTime, setLastFetchTime] = useState(0);
 
+  const fetchExchangeRate = async (from: string, to: string) => {
+    try {
+      console.log(`Fetching exchange rate for ${from} -> ${to}...`);
+      const response = await fetch(
+        `https://api.freecurrencyapi.com/v1/latest?apikey=${process.env.NEXT_PUBLIC_API_KEY}&base_currency=${from}&currencies=${to}`
+      );
+      const data = await response.json();
+      setExchangeRate(data.data[to]);
+      setLastFetchTime(Date.now());
+    } catch (error) {
+      console.error('Failed to fetch exchange rate', error);
+    }
+  };
+
   useEffect(() => {
     const CACHE_DURATION = 60 * 60 * 1000; // 10 minutes in milliseconds
 
-    const fetchExchangeRate = async () => {
-      try {
-        const response = await fetch(
-          `https://api.freecurrencyapi.com/v1/latest?apikey=${process.env.NEXT_PUBLIC_API_KEY}&base_currency=${fromCurrency}&currencies=${toCurrency}`
-        );
-        const data = await response.json();
-        setExchangeRate(data.data[toCurrency]);
-        setLastFetchTime(Date.now());
-      } catch (error) {
-        console.error('Failed to fetch exchange rate', error);
-      }
-    };
-
     const currentTime = Date.now();
     if (currentTime - lastFetchTime >= CACHE_DURATION) {
-      fetchExchangeRate();
+      fetchExchangeRate(fromCurrency, toCurrency);
     }
   }, [fromCurrency, toCurrency, lastFetchTime]);
 
@@ -57,11 +58,19 @@ const CurrencyConverterApp = () => {
   };
 
   const swapCurrencies = () => {
-    setFromCurrency(toCurrency);
-    setToCurrency(fromCurrency);
+    // Store current values first to use in the fetch
+    const newFromCurrency = toCurrency;
+    const newToCurrency = fromCurrency;
+
+    // Update state with swapped values
+    setFromCurrency(newFromCurrency);
+    setToCurrency(newToCurrency);
     setAmount('');
     setDisplayAmount('');
     setConvertedAmount('');
+
+    // Use the new values directly in the API call
+    fetchExchangeRate(newFromCurrency, newToCurrency);
   };
 
   return (
@@ -69,7 +78,7 @@ const CurrencyConverterApp = () => {
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="bg-blue-600 p-4 text-center">
           <h1 className="text-2xl font-bold text-white">Currency Converter</h1>
-          <p className="text-blue-100">IDR to SGD</p>
+          <p className="text-blue-100">{fromCurrency} to {toCurrency}</p>
         </div>
 
         <div className="p-6">
@@ -132,7 +141,7 @@ const CurrencyConverterApp = () => {
           {/* Exchange Rate Info */}
           {exchangeRate && (
             <div className="text-center mt-4 text-gray-600">
-              <p>25000 {fromCurrency} = {(25000 * exchangeRate).toFixed(2)} {toCurrency}</p>
+              <p>1 {fromCurrency} = {parseFloat(Number(exchangeRate).toPrecision(4))} {toCurrency}</p>
             </div>
           )}
         </div>
