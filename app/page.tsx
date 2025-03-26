@@ -76,11 +76,19 @@ const CurrencyConverterApp = () => {
               <span className="font-bold text-lg mr-2">{fromCurrency}</span>
             </div>
             <input
-              type="text" // Changed from "number" to "text" to allow commas
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               className="w-full text-right text-xl font-semibold bg-transparent outline-none"
               placeholder="Enter amount"
               value={displayAmount}
               onChange={handleAmountChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.currentTarget.blur();
+                  convertCurrency();
+                }
+              }}
             />
           </div>
 
