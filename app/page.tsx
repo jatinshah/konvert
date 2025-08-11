@@ -1,10 +1,12 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { SG, ID } from 'country-flag-icons/react/3x2'
+import { SG, ID, MY, IN } from 'country-flag-icons/react/3x2'
 
 const flags = {
   'IDR': <ID title="Indonesia" className="w-10 h-10" />,
   'SGD': <SG title="Singapore" className="w-10 h-10" />,
+  'MYR': <MY title="Malaysia" className="w-10 h-10" />,
+  'INR': <IN title="India" className="w-10 h-10" />,
 }
 
 const CurrencyConverterApp = () => {
@@ -46,13 +48,26 @@ const CurrencyConverterApp = () => {
   };
 
   useEffect(() => {
-    const CACHE_DURATION = 60 * 60 * 1000; // 10 minutes in milliseconds
-
+    const CACHE_DURATION = 60 * 60 * 1000; // 60 minutes in milliseconds
     const currentTime = Date.now();
-    if (currentTime - lastFetchTime >= CACHE_DURATION) {
+
+    // Fetch rates when currencies change or when cache expires
+    if (currentTime - lastFetchTime >= CACHE_DURATION ||
+      fromCurrency !== prevFromCurrency ||
+      toCurrency !== prevToCurrency) {
       fetchExchangeRate(fromCurrency, toCurrency);
     }
   }, [fromCurrency, toCurrency, lastFetchTime]);
+
+  // Track previous currency values
+  const [prevFromCurrency, setPrevFromCurrency] = useState(fromCurrency);
+  const [prevToCurrency, setPrevToCurrency] = useState(toCurrency);
+
+  // Update previous values when currencies change
+  useEffect(() => {
+    setPrevFromCurrency(fromCurrency);
+    setPrevToCurrency(toCurrency);
+  }, [fromCurrency, toCurrency]);
 
   const convertCurrency = () => {
     if (amount && exchangeRate) {
@@ -93,7 +108,18 @@ const CurrencyConverterApp = () => {
               {flags[fromCurrency as keyof typeof flags]}
             </div>
             <div className="flex-grow">
-              <span className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100">{fromCurrency}</span>
+              <select
+                value={fromCurrency}
+                onChange={(e) => {
+                  setFromCurrency(e.target.value);
+                  setConvertedAmount('');
+                }}
+                className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100 bg-transparent border-none outline-none cursor-pointer"
+              >
+                {Object.keys(flags).map((currency) => (
+                  <option key={currency} value={currency}>{currency}</option>
+                ))}
+              </select>
             </div>
             <input
               type="text"
@@ -130,7 +156,18 @@ const CurrencyConverterApp = () => {
               {flags[toCurrency as keyof typeof flags]}
             </div>
             <div className="flex-grow">
-              <span className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100">{toCurrency}</span>
+              <select
+                value={toCurrency}
+                onChange={(e) => {
+                  setToCurrency(e.target.value);
+                  setConvertedAmount('');
+                }}
+                className="font-bold text-lg mr-2 text-gray-800 dark:text-gray-100 bg-transparent border-none outline-none cursor-pointer"
+              >
+                {Object.keys(flags).map((currency) => (
+                  <option key={currency} value={currency}>{currency}</option>
+                ))}
+              </select>
             </div>
             <div className="w-full text-right text-xl font-semibold text-blue-600 dark:text-blue-400">
               {convertedAmount || '0.00'}
